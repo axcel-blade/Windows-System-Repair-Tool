@@ -9,11 +9,11 @@ echo.
 echo Running as Administrator is required...
 echo.
 
-:: Check if running as administrator
+:: Auto-elevate to administrator if not already
 net session >nul 2>&1
 if %errorLevel% NEQ 0 (
-    echo [ERROR] Please run this script as Administrator.
-    pause
+    echo Requesting administrator privileges...
+    powershell -Command "Start-Process -FilePath '%~f0' -Verb RunAs"
     exit /b
 )
 
