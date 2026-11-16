@@ -1,0 +1,21 @@
+title: "[Announcement] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use announcements for release notes and project-wide updates.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What should the community know?
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Links to CHANGELOG, releases, or docs
+    validations:
+      required: false

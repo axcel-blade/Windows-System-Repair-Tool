@@ -1,0 +1,21 @@
+title: "[Q&A] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ask how to use the repair tool. For bugs, open an Issue instead.
+        See SUPPORT.md for what to include.
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Windows version, menu option, log excerpts
+    validations:
+      required: false

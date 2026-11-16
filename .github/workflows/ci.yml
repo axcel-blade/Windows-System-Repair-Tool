@@ -1,0 +1,112 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+jobs:
+  Build:
+    name: Build
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify required files
+        shell: pwsh
+        run: |
+          $required = @(
+            'README.md',
+            'LICENSE',
+            'CONTRIBUTING.md',
+            'CODE_OF_CONDUCT.md',
+            'SECURITY.md',
+            'SUPPORT.md',
+            'CHANGELOG.md',
+            'RepairWindows.bat',
+            'RepairWindows.ps1',
+            'docs/README.md',
+            'docs/USAGE.md',
+            'docs/TROUBLESHOOTING.md',
+            'docs/GIT-FLOW.md',
+            '.github/PULL_REQUEST_TEMPLATE.md',
+            '.github/ISSUE_TEMPLATE/BUG_REPORT.md',
+            '.github/ISSUE_TEMPLATE/FEATURE_REQUEST.md',
+            '.github/ISSUE_TEMPLATE/DOCUMENTATION.md',
+            '.github/ISSUE_TEMPLATE/config.yml'
+          )
+          $missing = @()
+          foreach ($path in $required) {
+            if (-not (Test-Path -LiteralPath $path)) {
+              $missing += $path
+            }
+          }
+          if ($missing.Count -gt 0) {
+            Write-Error ("Missing required files:`n - " + ($missing -join "`n - "))
+            exit 1
+          }
+          Write-Host "All required files present."
+
+      - name: Enforce uppercase Markdown filenames
+        shell: pwsh
+        run: |
+          # Basename must be uppercase; extension stays .md (e.g. README.md, GIT-FLOW.md)
+          $bad = Get-ChildItem -Recurse -Filter '*.md' -File |
+            Where-Object { $_.FullName -notmatch '\\\.git\\' } |
+            Where-Object {
+              $base = [System.IO.Path]::GetFileNameWithoutExtension($_.Name)
+              $base -cne $base.ToUpperInvariant()
+            }
+          if ($bad) {
+            Write-Error ("Markdown basenames must be uppercase (extension .md):`n - " + (($bad | ForEach-Object { $_.FullName.Substring((Get-Location).Path.Length + 1) }) -join "`n - "))
+            exit 1
+          }
+          Write-Host "All Markdown basenames are uppercase."
+
+      - name: Parse PowerShell scripts
+        shell: pwsh
+        run: |
+          $scripts = Get-ChildItem -Recurse -Filter '*.ps1' -File |
+            Where-Object { $_.FullName -notmatch '\\\.git\\' }
+          if (-not $scripts) {
+            Write-Error 'No .ps1 scripts found.'
+            exit 1
+          }
+          $failed = $false
+          foreach ($script in $scripts) {
+            $errors = $null
+            $null = [System.Management.Automation.Language.Parser]::ParseFile(
+              $script.FullName,
+              [ref]$null,
+              [ref]$errors
+            )
+            $rel = $script.FullName.Substring((Get-Location).Path.Length + 1)
+            if ($errors -and $errors.Count -gt 0) {
+              $failed = $true
+              Write-Host "::error file=$rel::Parse failed for $rel"
+              $errors | ForEach-Object { Write-Host $_ }
+            }
+            else {
+              Write-Host "PARSE_OK  $rel"
+            }
+          }
+          if ($failed) { exit 1 }
+
+      - name: Validate batch launcher
+        shell: pwsh
+        run: |
+          $bat = Get-Content -LiteralPath 'RepairWindows.bat' -Raw
+          if ($bat -notmatch 'RepairWindows\.ps1') {
+            Write-Error 'RepairWindows.bat must invoke RepairWindows.ps1'
+            exit 1
+          }
+          if ($bat -notmatch 'ExecutionPolicy Bypass') {
+            Write-Error 'RepairWindows.bat should launch PowerShell with ExecutionPolicy Bypass'
+            exit 1
+          }
+          Write-Host 'Batch launcher looks valid.'
