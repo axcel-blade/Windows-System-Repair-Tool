@@ -85,17 +85,19 @@ Instead of running each command manually, use the included repair tool. `RepairW
 | 1 | Create system restore point |
 | 2 | DISM CheckHealth |
 | 3 | DISM ScanHealth |
-| 4 | DISM RestoreHealth |
-| 5 | DISM StartComponentCleanup |
-| 6 | SFC /scannow |
-| 7 | CHKDSK online scan (`/scan`) |
-| 8 | Schedule CHKDSK `/f` (reboot required later) |
-| 9 | Reset Windows Update components |
-| 10 | Network reset (flush DNS, Winsock, IP) |
-| 11 | Re-register Microsoft Store apps |
-| 12 | Clear user and Windows temp folders |
-| 13 | Full recommended sequence (restore point → DISM RestoreHealth → SFC → component cleanup) |
-| 14 | Show session summary |
+| 4 | DISM RestoreHealth (Windows Update) |
+| 5 | DISM RestoreHealth with Source (ISO/WIM/ESD) |
+| 6 | DISM StartComponentCleanup |
+| 7 | SFC /scannow |
+| 8 | CHKDSK online scan (`/scan`) |
+| 9 | Schedule CHKDSK `/f` (reboot required later) |
+| 10 | Reset Windows Update components |
+| 11 | Network reset (flush DNS, Winsock, IP) |
+| 12 | Re-register Microsoft Store apps |
+| 13 | Clear user and Windows temp folders |
+| 14 | Rebuild icon cache |
+| 15 | Full recommended sequence (restore point → DISM RestoreHealth → SFC → component cleanup) |
+| 16 | Show session summary |
 | 0 | Exit (shows summary first) |
 
 ### How to Run

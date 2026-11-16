@@ -22,14 +22,18 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\RepairWindows.ps1
 
 ## Recommended first run
 
-Use menu option **13** (full recommended sequence):
+Use menu option **15** (full recommended sequence):
 
 1. Create a system restore point  
 2. DISM RestoreHealth  
 3. SFC `/scannow`  
 4. DISM StartComponentCleanup  
 
-Then review option **14** (summary) or exit (summary is shown automatically).
+If DISM returns `0x800F0915`, use option **5** with a matching Windows ISO or `install.wim`.
+
+Then review option **16** (summary) or exit (summary is shown automatically).
+
+Blank desktop/taskbar icons: try option **14** (rebuild icon cache).
 
 ## Logs
 
@@ -51,5 +55,5 @@ The menu footer prints the active log path.
 ## Safety notes
 
 - The tool never forces a reboot.
-- CHKDSK `/f` (option 8) and network reset (option 10) may require a reboot you perform yourself.
+- CHKDSK `/f` (option 9) and network reset (option 11) may require a reboot you perform yourself.
 - Only run on systems you are authorized to administer.

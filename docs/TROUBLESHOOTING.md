@@ -26,10 +26,26 @@ System Restore may be disabled, or Windows may rate-limit restore points.
 - Free disk space on the system drive.
 - Review `%windir%\Logs\DISM\dism.log` and the tool session log under `%TEMP%\WindowsRepairTool\`.
 
+### Error `0x800F0915` (repair content could not be found)
+
+Windows Update did not supply repair files. This is a servicing/source problem, not proof that every system file is broken (SFC may still report no integrity violations).
+
+1. Confirm Windows Update works and you are online.
+2. In the repair tool, choose option **5** and point at:
+   - a matching Windows ISO, or
+   - `sources\install.wim` / `install.esd` from install media
+3. Re-run SFC (option **7**) after a successful Source repair.
+4. Optional: create a temporary local account (`WinTest`) to see if icons/startup issues are profile-specific — do not delete your main account.
+
+## Blank or missing icons
+
+- Restart Explorer (Task Manager → Windows Explorer → Restart), then use menu option **14** to rebuild the icon cache.
+- If a new local test account looks fine, the issue is more likely the user profile than the Windows image.
+
 ## SFC could not repair all files
 
-- Re-run DISM RestoreHealth, then SFC again.
-- If files remain unrepaired, offline repair from Windows installation media may be required (advanced; not automated by this tool).
+- Re-run DISM RestoreHealth (option **4**, or **5** with Source if Update fails), then SFC again.
+- If files remain unrepaired, offline repair from Windows installation media may still be required.
 
 ## CHKDSK `/f` scheduled but nothing happened
 

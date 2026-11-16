@@ -10,6 +10,8 @@ where version tags are used.
 
 ### Added
 
+- DISM RestoreHealth with local Source (ISO/WIM/ESD) — menu option 5; offered after `0x800F0915` in the full sequence
+- Icon cache rebuild — menu option 14
 - Menu-driven PowerShell repair suite (`RepairWindows.ps1`) with:
   - System restore point creation
   - DISM CheckHealth / ScanHealth / RestoreHealth / StartComponentCleanup
@@ -28,6 +30,11 @@ where version tags are used.
 
 - `RepairWindows.bat` is now a thin elevated launcher for `RepairWindows.ps1`
 - README documents the interactive menu and status codes
+
+### Fixed
+
+- Summary status no longer treats DISM/SFC progress text as the exit code (false `FAIL` when SFC/ComponentCleanup actually succeeded)
+- DISM RestoreHealth reports `0x800f0915` clearly when repair content is unavailable from Windows Update
 
 ## [0.1.0] - 2025-11-11
 
